@@ -24,6 +24,9 @@ class FinalOutput extends JFrame {
 
     public static int TOTAL = 0;
 
+    public static JLabel lblTotal = new JLabel();
+    public static JTable tblCustomerOrder = new JTable();
+    public static DefaultTableModel customerTableModel = new DefaultTableModel();
 
     public FinalOutput(){
         setVisible(false);
@@ -33,18 +36,17 @@ class FinalOutput extends JFrame {
 
         JComboBox cbbProductType = new JComboBox();
 
-        JLabel lblTotal = new JLabel();
+
 
         DefaultTableModel tableModel = new DefaultTableModel();
         String[] productColumnIdentifiers = {"Name", "Price" };
         tableModel.setColumnIdentifiers(productColumnIdentifiers);
 
-        DefaultTableModel customerTableModel = new DefaultTableModel();
         String[] recieptColumnIdentifiers = {"Name","Price"};
         customerTableModel.setColumnIdentifiers(recieptColumnIdentifiers);
 
         JTable tblProductList = new JTable(tableModel);
-        JTable tblCustomerOrder = new JTable(customerTableModel);
+        tblCustomerOrder.setModel(customerTableModel);
 
         String[] productType = {"Rice Meals", "Noodles", "Hotdog Sandwich", "Fries and Side", "Chicken", "Burger", "Breakfast", "Beverages and Desert"};
         String[][] productFilePath = {
@@ -99,7 +101,6 @@ class FinalOutput extends JFrame {
 
                     TOTAL += Integer.parseInt((String)customerTableModel.getValueAt(customerTableModel.getRowCount() - 1, 1));
                     lblTotal.setText(Integer.toString(TOTAL));
-                    System.out.println("total: " + TOTAL);
                 }
             }
         });
@@ -138,9 +139,15 @@ class FinalOutput extends JFrame {
         voidButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(auth);
-                VoidItem voidItem = new VoidItem();
-                voidItem.setVisible(true);
+                if(auth == "admin"){
+                    customerTableModel.setRowCount(0);
+                    TOTAL = 0;
+                    lblTotal.setText(Integer.toString(TOTAL));
+                }else{
+                    VoidItem voidItem = new VoidItem();
+                    voidItem.setVisible(true);
+                }
+
             }
         });
         JPanel addItemContainer = new JPanel();
@@ -200,7 +207,10 @@ class FinalOutput extends JFrame {
                                 String password = adminList.next();
 
                                 if(name.equals(inpUsername.getText()) && password.equals(new String(inpPassword.getPassword()))){
-                                    System.out.println("VOIDED");
+
+                                    FinalOutput.customerTableModel.setRowCount(0);
+                                    FinalOutput.TOTAL = 0;
+                                    FinalOutput.lblTotal.setText(Integer.toString(FinalOutput.TOTAL));
                                     break;
                                 }
                             }
@@ -227,13 +237,13 @@ class FinalOutput extends JFrame {
     }
 
     public static class LoginFrame extends JFrame {
-        public String auth;
-
         public LoginFrame(){
             setVisible(true);
             setSize(500, 300);
-            setLocationRelativeTo(null);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            getContentPane().setBackground(Color.cyan);
+
 
             //Login Basic Component
             JLabel lblLogin = new JLabel("Login");
@@ -275,7 +285,6 @@ class FinalOutput extends JFrame {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     if(e.getStateChange() == ItemEvent.SELECTED){
-                        System.out.println(cbbLoginType.getSelectedIndex());
                         switch (cbbLoginType.getSelectedIndex()){
                             case 0:
                                 counterInputPanel.setVisible(true);
@@ -330,23 +339,24 @@ class FinalOutput extends JFrame {
                 }
             });
 
+
+
             GridBagLayout gridBagLayout = new GridBagLayout();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
-            setLayout(gridBagLayout);
-
+            getContentPane().setLayout(gridBagLayout);
             gridBagConstraints.gridy = 0;
             gridBagConstraints.gridx = 0;
             gridBagConstraints.insets = new Insets(0, 0 ,10, 0);
-            add(lblLogin, gridBagConstraints);
+            getContentPane().add(lblLogin, gridBagConstraints);
             gridBagConstraints.gridy = 1;
-            add(cbbLoginType, gridBagConstraints);
+            getContentPane().add(cbbLoginType, gridBagConstraints);
             gridBagConstraints.gridy = 2;
-            add(counterInputPanel, gridBagConstraints);
+            getContentPane().add(counterInputPanel, gridBagConstraints);
             gridBagConstraints.gridy = 3;
-            add(adminInputPanel, gridBagConstraints);
+            getContentPane().add(adminInputPanel, gridBagConstraints);
             gridBagConstraints.gridy = 4;
-            add(btnLogin, gridBagConstraints);
+            getContentPane().add(btnLogin, gridBagConstraints);
         }
     }
 
